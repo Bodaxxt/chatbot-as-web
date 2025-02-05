@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع Chatbot الذكي</title>
+    <link rel="stylesheet" href="css.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">شعار الموقع</div>
+        <ul>
+            <li><a href="#home">الرئيسية</a></li>
+            <li><a href="#about">من نحن</a></li>
+            <li><a href="#services">الخدمات</a></li>
+            <li><a href="#contact">اتصل بنا</a></li>
+        </ul>
+        <button id="chatbot-button">جرب الـ Chatbot</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h1>مرحبًا بك في موقعنا الذكي</h1>
+        <p>استمتع بتجربة دردشة ذكية مع الـ Chatbot الخاص بنا.</p>
+        <button id="chatbot-hero-button">جرب الـ Chatbot</button>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <h2>من نحن</h2>
+        <p>نحن فريق متخصص في تقديم حلول الذكاء الاصطناعي لتحسين تجربة المستخدم.</p>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <h2>الخدمات</h2>
+        <div class="service-item">
+            <h3>دردشة ذكية</h3>
+            <p>دردشة تفاعلية مع الـ Chatbot الخاص بنا.</p>
+        </div>
+        <!-- يمكن إضافة المزيد من الخدمات -->
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <h2>اتصل بنا</h2>
+        <form>
+            <input type="text" placeholder="اسمك" required>
+            <input type="email" placeholder="بريدك الإلكتروني" required>
+            <textarea placeholder="رسالتك" required></textarea>
+            <button type="submit">إرسال</button>
+        </form>
+    </section>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot-popup" class="chatbot-popup">
+        <div class="chatbot-header">
+            <h3>Chatbot</h3>
+            <button id="close-chatbot">إغلاق</button>
+        </div>
+        <div class="chatbot-body">
+            <!-- هنا سيتم عرض Voiceflow Chatbot -->
+            <div id="flat-chat"></div>
+            <input type="text" id="chatbot-input" placeholder="اكتب رسالتك هنا..." />
+            <button id="send-message">إرسال</button>
+            <button id="voice-button">التحدث</button>
+        </div>
+    </div>
+
+    <script>
+        // فتح وإغلاق نافذة الـ Chatbot
+        document.getElementById('chatbot-button').addEventListener('click', function() {
+            document.getElementById('chatbot-popup').style.display = 'block';
+            startVoiceflow(); // بدء Voiceflow عند فتح النافذة
+        });
+
+        document.getElementById('chatbot-hero-button').addEventListener('click', function() {
+            document.getElementById('chatbot-popup').style.display = 'block';
+            startVoiceflow(); // بدء Voiceflow عند فتح النافذة
+        });
+
+        document.getElementById('close-chatbot').addEventListener('click', function() {
+            document.getElementById('chatbot-popup').style.display = 'none';
+        });
+
+        // دمج Voiceflow Chatbot مع دعم اللغة العربية
+        function startVoiceflow() {
+            (function(d, t) {
+                var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+                v.onload = function() {
+                    window.voiceflow.chat.load({
+                        verify: { projectID: '679a93b9961ebb9b222f3bf0' }, // استبدل بمعرف مشروعك
+                        url: 'https://general-runtime.voiceflow.com',
+                        versionID: 'production',
+                        render: {
+                            mode: 'embedded',
+                            target: document.getElementById('flat-chat'),
+                        },
+                        autostart: true, // بدء المحادثة تلقائيًا
+                        locale: 'ar-SA', // تعيين اللغة العربية (السعودية)
+                        language: 'ar' // تعيين اللغة للنموذج
+                    });
+                }
+                v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs";
+                v.type = "text/javascript";
+                s.parentNode.insertBefore(v, s);
+            })(document, 'script');
+        }
+
+        // التعرف على الصوت
+        document.getElementById('voice-button').addEventListener('click', function() {
+            startVoiceRecognition();
+        });
+
+        function startVoiceRecognition() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = 'ar-SA'; // تعيين اللغة العربية
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chatbot-input').value = transcript; // عرض النص في حقل الإدخال
+            };
+
+            recognition.onerror = function(event) {
+                console.error('حدث خطأ في التعرف على الصوت:', event.error);
+            };
+        }
+
+        // إرسال الرسالة النصية
+        document.getElementById('send-message').addEventListener('click', function() {
+            const userInput = document.getElementById('chatbot-input').value.trim();
+            if (userInput) {
+                // هنا يمكنك إرسال النص إلى Voiceflow أو أي خدمة أخرى
+                console.log('تم إرسال الرسالة:', userInput);
+                document.getElementById('chatbot-input').value = ''; // مسح حقل الإدخال
+            }
+        });
+    </script>
+</body>
+</html>
